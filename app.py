@@ -1,11 +1,19 @@
 import streamlit as st
 import pickle
 import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 import requests
 
 movies_dict = pickle.load(open("movies_dict.pkl","rb"))
 movies = pd.DataFrame(movies_dict)
-similarity_matrix = pickle.load(open("similarity_matrix.pkl","rb"))
+
+# Vectorization
+cv = CountVectorizer(max_features=5000, stop_words="english")
+vectors = cv.fit_transform(movies['tags']).toarray()
+
+# Cosine Similarity
+similarity_matrix = cosine_similarity(vectors)
 
 # To Fetch the poster of movie from API
 def fetch_poster(movie_id):
